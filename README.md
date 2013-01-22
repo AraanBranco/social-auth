@@ -1,21 +1,35 @@
 # CakePHP Social Auth
 
-With this plugin your uses can login via Facebook, Twitter or Facebook while
-using the default `AuthComponent`.
+With this plugin your users can login via **Facebook**, **Twitter** or **Facebook** while using the default `AuthComponent` without extra configuration.
 
-While using this plugin you can keep the default login via `AuthComponent`,
-they can work together.
+Don't worry! You can keep the default login via `AuthComponent`, they can work together.
 
-All these methods **do not create a new user** on your database, they just
-login the user with the data provided via the API and store it on the
-session `Auth.User`.
+All these methods **do not create a new user** on your database, they just login the user with the data provided via the API and store it on the `Auth.User` session value, just like `AuthComponent`.
 
 After the login, you can redirect the user to another page to finish the signup.
 
-## Facebook Configuration
+### Installation
 
-By default, the login via [Facebook](http://facebook.com) will fetch the
-user **id**, **name** and **email** from Facebook.
+TODO
+
+### Generic configuration
+
+You'll need to change your `login()` method to something like this:
+
+```php
+<?php
+public function login() {
+	if ($this->Auth->login()) {
+		$this->redirect($this->Auth->redirect());
+	} else if ($this->request->is('post')) {
+		$this->Session->setFlash(__("We couldn't login you, please try again"));
+	}
+}
+```
+
+Basicaly you need to run Auth->login() **without requiring** the request to be a POST.
+
+## Facebook configuration
 
 First, add **SocialAuth.Facebook** to your `$this->Auth->authenticate`
 configuration:
@@ -52,4 +66,23 @@ And then you can create the login button on the login screen:
 <?php echo $this->Form->end() ?>
 ```
 
-Later, you can use $this->Auth->getFacebookUser()
+By default, the login via Facebook will fetch the user **id**, **name** and **email** from Facebook. You can add [more fields](https://developers.facebook.com/docs/reference/api/user/) on the `SocialAuth.Facebook.fields` list, with something like this on your `AppController`:
+
+```php
+<?php
+$this->Auth->authenticate = array(
+	'SocialAuth.Facebook' => array(
+		'fields' => array('name', 'username', 'gender', 'email', 'link')
+	)
+);
+```
+
+
+
+## Twitter configuration
+
+TODO
+
+## Google configuration
+
+TODO
